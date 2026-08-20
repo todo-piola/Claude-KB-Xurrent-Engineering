@@ -76,6 +76,6 @@ Validated to correctly represent both simple chains and many-to-one joins (multi
 
 ### Related entries
 
-- `_Engineering__Known_Limitations.md` — "No REST endpoint for Workflow Template task sequence", "No bulk apply-template endpoint", "Workflow.template is historical only"
+- `_Engineering__Known_Limitations.md` — "No REST endpoint exposes a Workflow Template's Task predecessor/successor sequence", "No bulk "apply Workflow Template" REST endpoint exists", "Workflow.template is historical only — updating it does not transform the Workflow"
 - `_Engineering__Debugging.md` — API/Postman troubleshooting notes relevant to building and testing this sequence
 - `_Platform__Automation_Rules.md` — if triggering this sequence from an Automation Rule via `Call`/`Payload` to a Webhook
