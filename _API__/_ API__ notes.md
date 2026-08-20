@@ -1,0 +1,111 @@
+# Notes API
+
+- [List notes](../notes.html#list-notes)
+- [Get a single note](../notes.html#get-a-single-note)
+- [Fields](../notes.html#fields)
+
+## List notes
+
+List all notes (including the internal notes) for an account:
+
+```
+GET /notes
+```
+
+### Response
+
+```
+status: 200 OK
+```
+
+```
+[{"person":{"name":"Barney Turban","id":58},"created_at":"2016-03-12T11:33:00-06:00","text":"Use the information gathered in the previous risk & impact analysis tasks to finalize the change plan. Do this is such a way that the implementation plan minimizes both the risk of failure and the impact on the customer(s). Also ensure that the necessary approvals are collected before the implementation of the change can start.\n\nNote that approval from the owner of the service that is related to the workflow is required for each non-standard change, regardless of whether customer representative approval is required or not. Approval from the customer representative(s) of the service that is related to the workflow is only required if the change implementation is going to cause:\n- the service to become unavailable or degraded during service hours, or\n- the functionality of the service to become different.","id":464,"medium":"default","task":{"id":89,"subject":"Finalize the change plan"},"attachments":[]},{"person":{"name":"Luis Thomas","id":60},"created_at":"2016-03-12T11:33:00-06:00","text":"Because the servers are monitored by NNM and because they will need to be rebooted after the upgrade, events wil be generated, and we should warn Operations.","id":463,"medium":"default","task":{"id":88,"subject":"Will events be generated when the change is implemented?"},"attachments":[]},"..."]
+```
+
+The response contains [these fields](../notes.html#collection-fields) by default. [Filtering](../notes.html#filtering) and [pagination](../general/pagination.html) are available to reduce/limit the collection of notes.
+
+### Predefined Filters
+
+The following [predefined filters](../general/filtering.html#predefined-filters) are available:
+
+- `/notes/public`: List all public notes
+- `/notes/internal`: List all internal notes
+
+### Collection Fields
+
+By default [all fields](../notes.html#fields) will appear in collections of notes.
+
+### Filtering
+
+[Filtering](../general/filtering.html) is available for the following [fields](../notes.html#fields):
+
+`id` `person` `created_at` `medium`
+
+### Sorting
+
+By default a collection of notes is sorted **descending** by `id`.
+
+The following [fields](../notes.html#fields) are accepted by the [?sort= parameter](../general/ordering.html):
+
+`id` `person_id` `created_at`
+
+## Get a single note
+
+```
+GET /notes/:id
+```
+
+### Response
+
+```
+status: 200 OK
+```
+
+```
+{"person":{"name":"Patrick Spratt","id":56},"created_at":"2009-02-02T13:18:00-06:00","text":"Just came out of a meeting with our CIO. The business is going quickly and he does not want IT to be a bottleneck. He wants to make sure that new servers can be added quickly as needed. The first step we need to take is to add another rack in the data center. Carla, can you please open a new workflow for this?","id":2,"medium":"default","request":{"id":68673,"subject":"Add new rack in data center"},"attachments":[]}
+```
+
+The response contains [these fields](../notes.html#fields).
+
+## Fields
+
+account
+: *Readonly* **[reference](../general/data_types.html#references) to [Account](../general/data_types.html#account)** — The account that the note belongs to:
+: - Public notes belong to the account in which the author’s person record is registered.
+ - Internal notes belong to the account in which specialists are allowed to see the internal note.
+
+attachments
+: *Readonly* **aggregated Attachments**
+
+created\_at
+: *Readonly* **[datetime](../general/data_types.html)** — The date and time at which the note was created.
+
+id
+: *Readonly* **[integer](../general/data_types.html)** — The unique ID of the note.
+
+inbound\_email
+: *Readonly* **[reference](../general/data_types.html#references) to [Inbound Email](../requests/inbound_emails.html)** — The inbound email that led to the creation of this note.
+
+internal
+: *Optional* **[boolean](../general/data_types.html)** default: `false` — When the note is internal, the Internal field is set to `true`.
+
+internal\_account
+: *Readonly* **[reference](../general/data_types.html#references) to [Account](../general/data_types.html#account)** — The internal account, only present for internal notes. This field cannot be used in the `?fields=` parameter.
+
+medium
+: *Readonly* **[enum](../general/enumerations/index.html)**, default: `default` — The medium used to add the note. Valid values are:
+: - `default`: the note was manually added by a person, or automatically using the [REST](../index.html) or [Import API](../import.html).
+ - `email`: the note was added by the [Mail API](../requests/mail.html)
+ - `outbound_email`: the note was created via the “Send Email” action
+ - `system`: the note was generated by the system
+ - `redacted`: the note was deleted by an account administrator
+ - `automation`: the note was added by an automation rule
+
+person
+: *Required* **[reference](../general/data_types.html#references) to [Person](../people.html)**
+
+suppress\_note\_added\_notifications
+: *Writeonly* **[boolean](../general/data_types.html)**, default: `false` — When set to `true`, the note added notifications will not be sent for this note. This field cannot be used in the `?fields=` parameter.
+
+text
+: *Required* **[text](../general/data_types.html) (max 64KB)**, default: ``
