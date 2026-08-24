@@ -1,4 +1,4 @@
-# _Engineering__Debugging.md
+# Engineering/Debugging.md
 
 Debugging techniques, common errors, and troubleshooting methodology. Append new entries under the relevant subsection below — do not create a separate file per finding.
 
@@ -48,4 +48,4 @@ When a call to a sub-resource (e.g. `/workflow_templates/:id/phases`) fails unex
 
 ## Common Data-Entry Errors
 
-- Batch/array bodies are rejected by creation endpoints that expect a single object — see `_Engineering__Known_Limitations.md`, "Task/Phase creation endpoints reject batched arrays".
+- Batch/array bodies are rejected by creation endpoints that expect a single object — see `Engineering/KnownLimitations.md`, "Task/Phase creation endpoints reject batched arrays".

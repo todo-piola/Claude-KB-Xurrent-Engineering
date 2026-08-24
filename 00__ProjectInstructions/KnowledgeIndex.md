@@ -8,7 +8,7 @@ It helps identify where different types of information are stored and how the av
 
 This document is an index, not a replacement for the underlying documentation.
 
-**Last synchronized:** 2026-08-20 — naming convention and file inventory reconciled against the actual repository and Claude.ai Project Knowledge Base contents.
+**Last synchronized:** 2026-08-24 — naming convention and file inventory reconciled against the actual repository and Claude.ai Project Knowledge Base contents.
 
 
 ## Where This Lives
@@ -16,7 +16,7 @@ This document is an index, not a replacement for the underlying documentation.
 This Knowledge Base currently exists in two locations that must stay in sync:
 
 - **Git repository** (canonical source for the curated engineering files below). See `README.md` for the file list and the recommended Claude Code workflow, and `CLAUDE.md` for the operating rules an assistant should follow when editing this repo.
-- **Claude.ai Project Knowledge Base** — holds the same curated files as a queryable mirror (for in-chat search), **plus** the full `_API__*.md` official API documentation mirror, which does **not** exist in the git repository (see section 1.1).
+- **Claude.ai Project Knowledge Base** — holds the same curated files as a queryable mirror (for in-chat search), **plus** the full `API*.md` official API documentation mirror.
 
 This index applies to both locations equally. Workflow details (commit discipline, confirmation rules) live in `CLAUDE.md` and the Project's custom instructions respectively, not here — see section 10.
 
@@ -40,15 +40,11 @@ It includes:
 
 Official API documentation is stored as individual Markdown files using the naming convention:
 
-`_API__<original-document-name>.md`
+`02__Documentation/Xurrent/API/<Example_ElementExample>.md`
 
 Example:
 
-`_API__agile_boards.md`
-
-**These files exist only in the Claude.ai Project Knowledge Base.** They are a static mirror of the official Xurrent developer documentation, not content maintained through engineering findings, so they are intentionally excluded from the git repository (no commit history needed for a static mirror).
-
-These files should be consulted directly for API-related questions.
+`02__Documentation/Xurrent/API/AgileBoards_Audit.md`
 
 
 ### 1.2 Verified Engineering Knowledge
@@ -89,25 +85,11 @@ Where possible, document:
 - Expected result
 - Workaround
 
-
-### 1.4 Naming Convention
-
-All knowledge files (curated and API reference alike) use:
-
-`_<Category>__<Topic>.md`
-
-Example: `_Engineering__Known_Limitations.md`, `_Platform__Automation_Rules.md`, `_API__agile_boards.md`.
-
-Rationale: this is the convention the files already carried before this index was corrected, and it avoids characters (`[`, `]`, spaces) that are fragile in shell commands (`[`/`]` are bash glob metacharacters), in URLs (require percent-encoding), and in Markdown link syntax. Do not introduce `[Category] Name.md`–style names going forward — every entry below has been corrected to the real convention.
-
-Multi-word topics use underscores in place of spaces (e.g. `Known_Limitations`, not `Known Limitations`); avoid `&` and other special characters in new filenames (e.g. `_Platform__Reporting_Analytics.md`, not `Reporting & Analytics.md`).
-
-
 ## 2. Platform Knowledge
 
 ### 2.1 Architecture
 
-File: `_Platform__Architecture.md`
+File: `Platform/Architecture.md`
 **Status:** 🕳 Not yet created
 
 Contains:
@@ -126,7 +108,7 @@ Use this when reasoning about how Xurrent objects relate to each other.
 
 ### 2.2 Automation Rules
 
-File: `_Platform__Automation_Rules.md`
+File: `Platform/AutomationRules.md`
 **Status:** ✅ Exists
 
 Contains:
@@ -146,7 +128,7 @@ Contains:
 
 ### 2.3 Expression Language
 
-File: `_Platform__Expression_Language.md`
+File: `Platform/ExpressionLanguage.md`
 **Status:** 🕳 Not yet created
 
 Contains:
@@ -171,7 +153,7 @@ Treat the Xurrent expression language as distinct from general Ruby.
 
 ### 2.4 Workflow Templates
 
-File: `_Platform__Workflow_Templates.md`
+File: `Platform/WorkflowTemplates.md`
 **Status:** 🕳 Not yet created
 
 Contains:
@@ -186,12 +168,12 @@ Contains:
 - Rejection behaviour
 - Automation interaction
 
-Note: until this file exists, native Workflow completion/rejection behaviour findings are documented in `_Platform__Automation_Rules.md` (when the finding concerns Automation Rule interaction) or `_Engineering__ITSM_Solution_Patterns.md` (when the finding concerns approval process design) — see those files' own scope. Move them here once this file is created and enough content exists to justify the split.
+Note: until this file exists, native Workflow completion/rejection behaviour findings are documented in `Platform/AutomationRules.md` (when the finding concerns Automation Rule interaction) or `Engineering/SolutionPatterns.md` (when the finding concerns approval process design) — see those files' own scope. Move them here once this file is created and enough content exists to justify the split.
 
 
 ### 2.5 Task Templates
 
-File: `_Platform__Task_Templates.md`
+File: `Platform/TaskTemplates.md`
 **Status:** 🕳 Not yet created
 
 Contains:
@@ -208,7 +190,7 @@ Contains:
 
 ### 2.6 UI Extensions
 
-File: `_Platform__UI_Extensions.md`
+File: `Platform/UIExtensions.md`
 **Status:** 🕳 Not yet created
 
 Contains:
@@ -231,15 +213,13 @@ Contains:
 
 Official API documentation is stored as individual files.
 
-Naming convention: `_API__<document-name>.md`
+Official API documentation is stored as individual Markdown files using the naming convention:
 
-Examples:
+Example:
 
-- `_API__agile_boards.md`
-- `_API__requests.md`
-- `_API__tasks.md`
+`02__Documentation/Xurrent/API/<Example_ElementExample>.md`
 
-**Status:** ✅ Exists (Claude.ai Project Knowledge Base only — not in the git repository; see section 1.1).
+**Status:** ✅ Exists
 
 Use the most specific API document available rather than relying on assumptions.
 
@@ -248,7 +228,7 @@ Use the most specific API document available rather than relying on assumptions.
 
 ### 3.1 Recipes
 
-File: `_Engineering__Recipes.md`
+File: `Engineering/Recipes.md`
 **Status:** ✅ Exists
 
 Contains short, reusable solutions.
@@ -270,7 +250,7 @@ Recipes should favour concise, copy-ready implementations.
 
 ### 3.2 Known Limitations
 
-File: `_Engineering__Known_Limitations.md`
+File: `Engineering/KnownLimitations.md`
 **Status:** ✅ Exists
 
 Contains verified or observed limitations.
@@ -288,7 +268,7 @@ Each entry should ideally contain:
 
 ### 3.3 Debugging
 
-File: `_Engineering__Debugging.md`
+File: `Engineering/Debugging.md`
 **Status:** ✅ Exists
 
 Contains:
@@ -308,7 +288,7 @@ Contains:
 
 ### 3.4 Regex Cookbook
 
-File: `_Engineering__Regex_Cookbook.md`
+File: `Engineering/RegexCookbook.md`
 **Status:** 🕳 Not yet created
 
 Contains reusable Ruby-compatible regular expressions where applicable.
@@ -329,16 +309,16 @@ Do not assume that Ruby regex support means every Ruby regex method or replaceme
 
 ## 4. Integrations
 
-Category prefix: `_Integrations__<Topic>.md` — one file per integration/topic, following the same pattern as every other category, rather than a single catch-all file.
+Category prefix: `Integrations/<Topic>.md` — one file per integration/topic, following the same pattern as every other category, rather than a single catch-all file.
 
 | File | Status |
 |---|---|
-| `_Integrations__Webhooks.md` | ✅ Exists |
-| `_Integrations__Lansweeper.md` | 🕳 Not yet created |
-| `_Integrations__iPaaS.md` | 🕳 Not yet created |
-| `_Integrations__OAuth.md` | 🕳 Not yet created |
+| `Integrations/Webhooks.md` | ✅ Exists |
+| `Integrations/Lansweeper.md` | 🕳 Not yet created |
+| `Integrations/iPaaS.md` | 🕳 Not yet created |
+| `Integrations/OAuth.md` | 🕳 Not yet created |
 
-Create a new `_Integrations__<Topic>.md` file only once there is verified, reusable content for that specific integration — do not pre-create empty files.
+Create a new `Integrations/<Topic>.md` file only once there is verified, reusable content for that specific integration — do not pre-create empty files.
 
 Each integration entry should document:
 
@@ -356,7 +336,7 @@ Each integration entry should document:
 
 ## 5. Reporting and Analytics
 
-File: `_Platform__Reporting_Analytics.md`
+File: `Platform/ReportingAnalytics.md`
 **Status:** 🕳 Not yet created
 
 Contains:
@@ -375,7 +355,7 @@ Document limitations explicitly, especially when a calculated value cannot be gr
 
 ## 6. Custom Collections and Views
 
-File: `_Platform__Custom_Collections_Views.md`
+File: `Platform/CustomCollectionsViews.md`
 **Status:** 🕳 Not yet created
 
 Contains:
@@ -394,7 +374,7 @@ Document the actual location and ownership of the collection carefully, because 
 
 ## 7. ITSM / ITIL Solution Design
 
-File: `_Engineering__ITSM_Solution_Patterns.md`
+File: `Engineering/SolutionPatterns.md`
 **Status:** ✅ Exists
 
 Contains solution design patterns for:
@@ -420,7 +400,7 @@ Always distinguish between:
 
 ## 8. Naming and Conventions
 
-File: `_Engineering__Conventions.md`
+File: `Engineering/Conventions.md`
 **Status:** 🕳 Not yet created
 
 Contains project conventions for:
@@ -476,8 +456,8 @@ This section states the *principle*. The confirm-before-writing workflow itself 
 
 ## 11. Current Project Context
 
-The Knowledge Base now exists as a git repository (canonical for the curated engineering files) mirrored into a Claude.ai Project (which additionally holds the full `_API__*.md` reference mirror — see section 1.1).
+The Knowledge Base now exists as a git repository (canonical for the curated engineering files) mirrored into a Claude.ai Project (which additionally holds the full `API*.md` reference mirror — see section 1.1).
 
-Of the taxonomy above, the following files currently exist with real content: `_Platform__Automation_Rules.md`, `_Engineering__Recipes.md`, `_Engineering__Known_Limitations.md`, `_Engineering__Debugging.md`, `_Engineering__ITSM_Solution_Patterns.md`, `_Integrations__Webhooks.md`. Every other file listed in this index is a reserved taxonomy slot, not yet created — check the **Status** field before assuming a file has content or citing it.
+Of the taxonomy above, the following files currently exist with real content: `Platform/AutomationRules.md`, `Engineering/Recipes.md`, `Engineering/KnownLimitations.md`, `Engineering/Debugging.md`, `Engineering/SolutionPatterns.md`, `Integrations/Webhooks.md`. Every other file listed in this index is a reserved taxonomy slot, not yet created — check the **Status** field before assuming a file has content or citing it.
 
 The project should continue to evolve into a reusable Xurrent engineering knowledge base rather than a chronological archive of conversations. When updating this index (new file created, category added, convention changed), update the "Last synchronized" date at the top.

@@ -48,7 +48,7 @@ Spanish equivalents.
 # Sources of Truth
 
 Priority order, highest first:
-1. Official Xurrent documentation
+1. Official Xurrent documentation uploaded in this project/repo
 2. Official Xurrent developer/API documentation
 3. This repository's verified knowledge files
 4. Verified behaviour observed in the user's Xurrent environment
@@ -161,7 +161,7 @@ data issue / permission issue / possible platform bug.
 
 # Using This Repository as Knowledge Source
 
-`00_Knowledge_Index.md` is the authoritative taxonomy for this repository —
+`00__ProjectInstructions/KnowledgeIndex.md` is the authoritative taxonomy for this repository —
 consult it before deciding where a finding belongs. Do not invent new files
 or categories when an existing one already fits, and do not create a
 standalone new file per topic or per conversation.
@@ -170,14 +170,14 @@ Current knowledge files and their scope:
 
 | File | Scope |
 |---|---|
-| `_Platform__Automation_Rules.md` | Automation Rule execution behaviour, operators, constraints |
-| `_Engineering__Known_Limitations.md` | Verified platform limitations, gotchas, workarounds |
-| `_Engineering__Debugging.md` | Debugging methodology and techniques |
-| `_Engineering__Recipes.md` | Reusable implementation patterns |
-| `_Engineering__ITSM_Solution_Patterns.md` | ITSM process design patterns |
-| `_Integrations__Webhooks.md` | Webhook integration notes |
+| `Platform/AutomationRules.md` | Automation Rule execution behaviour, operators, constraints |
+| `Engineering/KnownLimitations.md` | Verified platform limitations, gotchas, workarounds |
+| `Engineering/Debugging.md` | Debugging methodology and techniques |
+| `Engineering/Recipes.md` | Reusable implementation patterns |
+| `Engineering/ITSM_SolutionPatterns.md` | ITSM process design patterns |
+| `Integrations/Webhooks.md` | Webhook integration notes |
 
-This repository does **not** include the `_API__*.md` files (a static mirror
+This repository does **not** include the `API*.md` files (a static mirror
 of the official Xurrent developer documentation). Those remain only in the
 Claude.ai Project Knowledge Base — they are reference material, not content
 maintained through engineering findings, so they don't need commit history.
@@ -200,7 +200,7 @@ When documenting a discovered limitation, include: Problem, Expected
 behaviour, Actual behaviour, Root cause (if known), Verification method,
 Status (certainty label), Workaround, and Notes (cross-references,
 environment/date if relevant). Follow the existing structure already used in
-`_Engineering__Known_Limitations.md`.
+`Engineering/KnownLimitations.md`.
 
 # Code and Expressions
 
@@ -236,6 +236,28 @@ expressions, tasks, templates, custom fields, UI Extensions, integrations,
 custom collections, reports, and views. Avoid placeholder names
 (`expression1`, `temp`, `test`, `new_rule`, `field1`) unless explicitly
 temporary. This applies to commit messages and branch names too.
+
+## Naming Convention
+
+All filenames in this repository use PascalCase — no spaces, hyphens, or
+mid-word underscores survive in the final name:
+
+1. An underscore (`_`) in the source name joins two words: it is removed and
+   the following word is capitalized (`billable_users` → `BillableUsers`).
+2. A hyphen (`-`) in the source name marks a resource / related-sub-resource
+   boundary (mirroring nested API resource paths): it becomes a single
+   underscore that is *kept* in the final name, and the following word is
+   capitalized (`Account-billable_users` → `Account_BillableUsers`).
+3. The underscore that survives step 2 is therefore never a generic word
+   separator — it always marks that resource/sub-resource relationship.
+4. The first letter of the filename keeps its original case (PascalCase),
+   this is not lower-camelCase.
+5. Multi-word segments compress fully: `App_offering_automation_rules-audit`
+   → `AppOfferingAutomationRules_Audit`.
+6. Extension stays lowercase (`.md`), untouched by the rule.
+
+Applies to every file in this repository from now on, not only the
+`02__Documentation/Xurrent/API/` mirror.
 
 # Response Style / Teaching Mode
 
@@ -276,7 +298,7 @@ it:
    record IDs, org-specific team/template names) — the latter do not belong
    in this repository.
 2. Map each finding to its file using the table above and
-   `00_Knowledge_Index.md`.
+   `00__ProjectInstructions/KnowledgeIndex.md`.
 3. Draft the exact text to add, in the existing format of the target file.
 4. Follow the Human-in-the-Loop rule above before writing or committing
    anything.

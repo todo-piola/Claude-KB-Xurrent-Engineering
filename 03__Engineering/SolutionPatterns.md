@@ -1,4 +1,4 @@
-# _Engineering__ITSM_Solution_Patterns.md
+# Engineering/SolutionPatterns.md
 
 Solution design patterns for recurring Xurrent workflow-governance and digital/business-process scenarios. Append new patterns below — do not create a separate file per pattern.
 
@@ -22,7 +22,7 @@ Three fundamentally different patterns exist. Which one applies depends on **whe
 
 ### Pattern 2 — "Inject" (build only what's needed)
 
-The Workflow starts minimal. When the routing decision is made mid-flow, an external service creates — via the REST call sequence in `_Engineering__Recipes.md` — only the Phases/Tasks belonging to the chosen path.
+The Workflow starts minimal. When the routing decision is made mid-flow, an external service creates — via the REST call sequence in `Engineering/Recipes.md` — only the Phases/Tasks belonging to the chosen path.
 
 ### Pattern 3 — "Superset + cancel"
 
@@ -36,15 +36,15 @@ Actions:
 a1: update tasks_to_cancel set status = canceled
 ```
 
-Natively achievable with a single Automation Rule action — see `_Platform__Automation_Rules.md`, "Updates", for the confirmed collection-level `Update` behaviour this relies on.
+Natively achievable with a single Automation Rule action — see `Platform/AutomationRules.md`, "Updates", for the confirmed collection-level `Update` behaviour this relies on.
 
-**Confirmed viability condition:** cancelling a predecessor Task releases its successor to advance — see `_Engineering__Known_Limitations.md`. This means Pattern 3 does not leave the chosen branch permanently blocked, as long as the graph is designed so the chosen branch's own predecessors are never among the cancelled set.
+**Confirmed viability condition:** cancelling a predecessor Task releases its successor to advance — see `Engineering/KnownLimitations.md`. This means Pattern 3 does not leave the chosen branch permanently blocked, as long as the graph is designed so the chosen branch's own predecessors are never among the cancelled set.
 
 ### Comparison
 
 | Criterion | Pattern 2 — Inject | Pattern 3 — Superset + Cancel |
 |---|---|---|
-| Automation Rule complexity | High — requires an external webhook/service; a native Automation Rule alone cannot loop or create Phases (see `_Engineering__Known_Limitations.md`). | Low — a single native `Update` action with `select()`/`reject()`; potentially zero external code for the cancellation step itself. |
+| Automation Rule complexity | High — requires an external webhook/service; a native Automation Rule alone cannot loop or create Phases (see `Engineering/KnownLimitations.md`). | Low — a single native `Update` action with `select()`/`reject()`; potentially zero external code for the cancellation step itself. |
 | Gantt/template hygiene | Each path lives in its own, focused Workflow Template — clean, but that template is only ever consumed via API, never literally "applied" in the UI. | One dense Gantt mixing every path's Tasks and cross-branch predecessor/successor wiring. Gets harder to read as paths are added. |
 | Scaling to a new path | Add a new Workflow Template + one more routing branch. Each path's Gantt stays isolated. | Add more Tasks to the superset template and adjust the cancellation condition. The single Gantt keeps growing indefinitely. |
 | Team/queue noise | Tasks belonging to non-chosen paths never exist in the real Workflow. | All paths' Tasks are instantiated momentarily, then cancelled — can transiently appear in other teams' queues and pollute "tasks per team" metrics. |
@@ -54,6 +54,6 @@ Neither pattern is universally better. As a rule of thumb: paths that share most
 
 ### Related entries
 
-- `_Engineering__Recipes.md` — the REST call sequence Pattern 2 depends on.
-- `_Platform__Automation_Rules.md` — the collection-`Update` mechanism Pattern 3 depends on.
-- `_Engineering__Known_Limitations.md` — constraints that rule out a native, code-free version of Pattern 2.
+- `Engineering/Recipes.md` — the REST call sequence Pattern 2 depends on.
+- `Platform/AutomationRules.md` — the collection-`Update` mechanism Pattern 3 depends on.
+- `Engineering/KnownLimitations.md` — constraints that rule out a native, code-free version of Pattern 2.

@@ -1,6 +1,6 @@
-# _Engineering__Known_Limitations.md
+# Engineering/KnownLimitations.md
 
-Verified or observed platform limitations and behaviours. Each entry follows the fixed structure defined in `00_Knowledge_Index.md`. Append new entries below — do not create a separate file per limitation.
+Verified or observed platform limitations and behaviours. Each entry follows the fixed structure defined in `00__ProjectInstructions/KnowledgeIndex.md`. Append new entries below — do not create a separate file per limitation.
 
 ---
 
@@ -22,7 +22,7 @@ Reviewed the full Workflows / Workflow Templates API reference; cross-checked th
 [Confirmed]
 
 ### Workaround
-See `_Engineering__Recipes.md` — "Injecting Phases and Tasks from a Workflow Template into an Already-Running Workflow (via REST API)".
+See `Engineering/Recipes.md` — "Injecting Phases and Tasks from a Workflow Template into an Already-Running Workflow (via REST API)".
 
 ### Notes
 —
@@ -72,7 +72,7 @@ No. The only documented creation primitive is `new(task, ...)`, explicitly scope
 [Confirmed]
 
 ### Workaround
-Phases and Workflows must be created via the REST API (or native platform flows), not via Automation Rule actions. See `_Engineering__Recipes.md`.
+Phases and Workflows must be created via the REST API (or native platform flows), not via Automation Rule actions. See `Engineering/Recipes.md`.
 
 ### Notes
 —
@@ -97,7 +97,7 @@ Reviewed official Automation Rule operators documentation; no iteration operator
 [Confirmed by absence]
 
 ### Workaround
-Hardcode the set of `new(task, 'Subject')` calls per known Workflow Template/family as static rule content, or move the logic to an external service driven by a Webhook (see `_Integrations__Webhooks.md`) if the set of templates is large or changes often.
+Hardcode the set of `new(task, 'Subject')` calls per known Workflow Template/family as static rule content, or move the logic to an external service driven by a Webhook (see `Integrations/Webhooks.md`) if the set of templates is large or changes often.
 
 ### Notes
 —
@@ -122,7 +122,7 @@ Full review of the Workflows and Workflow Templates API reference documentation.
 [Confirmed]
 
 ### Workaround
-See `_Engineering__Recipes.md`.
+See `Engineering/Recipes.md`.
 
 ### Notes
 —
@@ -238,7 +238,7 @@ What happens to a Workflow/Request when an approval Task is rejected — nativel
 Native Xurrent behaviour: when an approver rejects an approval Task, the Workflow moves to `Progress Halted`, the Workflow Manager is notified, and the Request is left completely untouched — not automatically completed, not reassigned. The intended design is for a real person (the owning team) to review and close the Request themselves after a rejection.
 
 ### Actual behaviour
-When a custom Automation Rule instead sets the Workflow/Request status to `Completed` immediately after the rejection (bypassing `Progress Halted`), Xurrent's mandatory team/member resolution for `Completed` uses the **account owner** as the acting identity — because Automation Rules execute as the account owner (see `_Platform__Automation_Rules.md`). Neither the Workflow Manager, nor whoever completed the last Task, nor whoever triggered the rule is used. If the account owner does not belong to the Request's current team, Xurrent silently moves the Request to a team the account owner belongs to and sets the account owner as `member`, even though the account owner had no real involvement in the case. This can misdirect closed Requests to unrelated teams and pollute team/ownership reporting.
+When a custom Automation Rule instead sets the Workflow/Request status to `Completed` immediately after the rejection (bypassing `Progress Halted`), Xurrent's mandatory team/member resolution for `Completed` uses the **account owner** as the acting identity — because Automation Rules execute as the account owner (see `Platform/AutomationRules.md`). Neither the Workflow Manager, nor whoever completed the last Task, nor whoever triggered the rule is used. If the account owner does not belong to the Request's current team, Xurrent silently moves the Request to a team the account owner belongs to and sets the account owner as `member`, even though the account owner had no real involvement in the case. This can misdirect closed Requests to unrelated teams and pollute team/ownership reporting.
 
 ### Verification
 Confirmed by Xurrent Support, including a live reproduction of the native rejection flow in a clean Xurrent environment (isolated from customer-specific Automation Rules), cross-referenced against the official KA *"What are the rules for request re-assignment on Completion or Waiting for Customer."*
@@ -253,4 +253,4 @@ Confirmed by Xurrent Support, including a live reproduction of the native reject
 - Test any such rule outside production first.
 
 ### Notes
-See `_Platform__Automation_Rules.md` — "Request/Workflow Completion — Team & Member Assignment" — for the general (non-Automation-Rule) version of the resolution rule this entry depends on.
+See `Platform/AutomationRules.md` — "Request/Workflow Completion — Team & Member Assignment" — for the general (non-Automation-Rule) version of the resolution rule this entry depends on.

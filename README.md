@@ -4,21 +4,16 @@ Version-controlled source of truth for the curated Xurrent engineering knowledge
 base (Automation Rules patterns, known limitations, debugging techniques,
 recipes, ITSM solution patterns, and integrations notes).
 
-This repo does **not** include the `_API__*.md` files (static mirror of the
-official Xurrent developer documentation). Those are reference material, not
-content edited through conversations, so they don't need commit history — they
-can continue to live as-is in the Claude Project's Knowledge Base.
-
 ## Files
 
 | File | Scope |
 |---|---|
-| `00_Knowledge_Index.md` | Taxonomy / index — where each type of finding belongs |
-| `_Platform__Automation_Rules.md` | Automation Rule execution behaviour, operators, constraints |
-| `_Engineering__Known_Limitations.md` | Verified platform limitations, gotchas, workarounds |
-| `_Engineering__Debugging.md` | Debugging methodology and techniques |
-| `_Engineering__Recipes.md` | Reusable implementation patterns |
-| `_Engineering__ITSM_Solution_Patterns.md` | ITSM process design patterns |
+| `00__ProjectInstructions/KnowledgeIndex.md` | Taxonomy / index — where each type of finding belongs |
+| `01__Platform/AutomationRules.md` | Automation Rule execution behaviour, operators, constraints |
+| `03__Engineering/KnownLimitations.md` | Verified platform limitations, gotchas, workarounds |
+| `03__Engineering/Debugging.md` | Debugging methodology and techniques |
+| `03__Engineering/Recipes.md` | Reusable implementation patterns |
+| `03__Engineering/SolutionPatterns.md` | ITSM process design patterns |
 | `_Integrations__Webhooks.md` | Webhook integration notes |
 
 ## Recommended workflow

@@ -1,4 +1,4 @@
-# _Engineering__Recipes.md
+# Engineering/Recipes.md
 
 Short, reusable, copy-ready implementations for common Xurrent engineering needs. Each entry is self-contained. Append new recipes below following the same structure — do not create a separate file per recipe.
 
@@ -8,7 +8,7 @@ Short, reusable, copy-ready implementations for common Xurrent engineering needs
 
 ### When to use it
 
-A Workflow is already running and needs to be extended or reshaped with the Phases/Tasks of a *different* Workflow Template than the one it was created from — without recreating the Workflow. There is no native shortcut for this (see `_Engineering__Known_Limitations.md`); this sequence replicates, via the REST API, what the Gantt's "Apply Workflow Template..." action does internally.
+A Workflow is already running and needs to be extended or reshaped with the Phases/Tasks of a *different* Workflow Template than the one it was created from — without recreating the Workflow. There is no native shortcut for this (see `Engineering/KnownLimitations.md`); this sequence replicates, via the REST API, what the Gantt's "Apply Workflow Template..." action does internally.
 
 ### Call sequence
 
@@ -76,6 +76,6 @@ Validated to correctly represent both simple chains and many-to-one joins (multi
 
 ### Related entries
 
-- `_Engineering__Known_Limitations.md` — "No REST endpoint exposes a Workflow Template's Task predecessor/successor sequence", "No bulk "apply Workflow Template" REST endpoint exists", "Workflow.template is historical only — updating it does not transform the Workflow"
-- `_Engineering__Debugging.md` — API/Postman troubleshooting notes relevant to building and testing this sequence
-- `_Platform__Automation_Rules.md` — if triggering this sequence from an Automation Rule via `Call`/`Payload` to a Webhook
+- `Engineering/KnownLimitations.md` — "No REST endpoint exposes a Workflow Template's Task predecessor/successor sequence", "No bulk "apply Workflow Template" REST endpoint exists", "Workflow.template is historical only — updating it does not transform the Workflow"
+- `Engineering/Debugging.md` — API/Postman troubleshooting notes relevant to building and testing this sequence
+- `Platform/AutomationRules.md` — if triggering this sequence from an Automation Rule via `Call`/`Payload` to a Webhook

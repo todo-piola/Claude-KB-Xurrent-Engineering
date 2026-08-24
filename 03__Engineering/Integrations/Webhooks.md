@@ -1,4 +1,4 @@
-# _Integrations__Webhooks.md
+# Engineering/Integrations/Webhooks.md
 
 Confirmed platform capabilities for building outbound integrations from Xurrent via Webhooks, and the authentication mechanisms available to external services calling back into the Xurrent API.
 
@@ -42,9 +42,9 @@ Xurrent **automatically disables a Webhook after 20 consecutive failures spannin
 
 ## Known Limitations
 
-See `_Engineering__Known_Limitations.md`, "API host for legacy-branded ('4me.qa') domain accounts may differ from the documented Service URL table" — relevant when configuring the callback endpoint's own outbound calls back to Xurrent.
+See `Engineering/KnownLimitations.md`, "API host for legacy-branded ('4me.qa') domain accounts may differ from the documented Service URL table" — relevant when configuring the callback endpoint's own outbound calls back to Xurrent.
 
 ## Related entries
 
-- `_Engineering__Recipes.md` — end-to-end example of a Webhook-triggered call sequence.
-- `_Platform__Automation_Rules.md` — `Call`/`Payload` fields in full Automation Rule context.
+- `Engineering/Recipes.md` — end-to-end example of a Webhook-triggered call sequence.
+- `Platform/AutomationRules.md` — `Call`/`Payload` fields in full Automation Rule context.
