@@ -14,7 +14,7 @@ recipes, ITSM solution patterns, and integrations notes).
 | `03__Engineering/Debugging.md` | Debugging methodology and techniques |
 | `03__Engineering/Recipes.md` | Reusable implementation patterns |
 | `03__Engineering/SolutionPatterns.md` | ITSM process design patterns |
-| `_Integrations__Webhooks.md` | Webhook integration notes |
+| `03__Engineering/Integrations/Webhooks.md` | Webhook integration notes |
 
 ## Recommended workflow
 
