@@ -10,6 +10,7 @@ recipes, ITSM solution patterns, and integrations notes).
 |---|---|
 | `00__ProjectInstructions/KnowledgeIndex.md` | Taxonomy / index — where each type of finding belongs |
 | `01__Platform/AutomationRules.md` | Automation Rule execution behaviour, operators, constraints |
+| `01__Platform/ReportingAnalytics.md` | Native behaviour of Analytics console views (Change Calendar, Reports, Dashboards) |
 | `03__Engineering/KnownLimitations.md` | Verified platform limitations, gotchas, workarounds |
 | `03__Engineering/Debugging.md` | Debugging methodology and techniques |
 | `03__Engineering/Recipes.md` | Reusable implementation patterns |
