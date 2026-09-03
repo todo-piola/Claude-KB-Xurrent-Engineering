@@ -8,7 +8,7 @@ It helps identify where different types of information are stored and how the av
 
 This document is an index, not a replacement for the underlying documentation.
 
-**Last synchronized:** 2026-08-24 — naming convention and file inventory reconciled against the actual repository and Claude.ai Project Knowledge Base contents.
+**Last synchronized:** 2026-09-03 — added `Platform/ReportingAnalytics.md` (Change Calendar visibility requirements) and corresponding `Engineering/KnownLimitations.md` entry.
 
 
 ## Where This Lives
@@ -337,7 +337,7 @@ Each integration entry should document:
 ## 5. Reporting and Analytics
 
 File: `Platform/ReportingAnalytics.md`
-**Status:** 🕳 Not yet created
+**Status:** ✅ Exists
 
 Contains:
 
@@ -458,6 +458,6 @@ This section states the *principle*. The confirm-before-writing workflow itself 
 
 The Knowledge Base now exists as a git repository (canonical for the curated engineering files) mirrored into a Claude.ai Project (which additionally holds the full `API*.md` reference mirror — see section 1.1).
 
-Of the taxonomy above, the following files currently exist with real content: `Platform/AutomationRules.md`, `Engineering/Recipes.md`, `Engineering/KnownLimitations.md`, `Engineering/Debugging.md`, `Engineering/SolutionPatterns.md`, `Integrations/Webhooks.md`. Every other file listed in this index is a reserved taxonomy slot, not yet created — check the **Status** field before assuming a file has content or citing it.
+Of the taxonomy above, the following files currently exist with real content: `Platform/AutomationRules.md`, `Platform/ReportingAnalytics.md`, `Engineering/Recipes.md`, `Engineering/KnownLimitations.md`, `Engineering/Debugging.md`, `Engineering/SolutionPatterns.md`, `Integrations/Webhooks.md`. Every other file listed in this index is a reserved taxonomy slot, not yet created — check the **Status** field before assuming a file has content or citing it.
 
 The project should continue to evolve into a reusable Xurrent engineering knowledge base rather than a chronological archive of conversations. When updating this index (new file created, category added, convention changed), update the "Last synchronized" date at the top.
