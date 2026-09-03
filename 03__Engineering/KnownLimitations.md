@@ -254,3 +254,23 @@ Confirmed by Xurrent Support, including a live reproduction of the native reject
 
 ### Notes
 See `Platform/AutomationRules.md` — "Request/Workflow Completion — Team & Member Assignment" — for the general (non-Automation-Rule) version of the resolution rule this entry depends on.
+
+---
+
+## Task Not Appearing in Change Calendar Despite Category = Implementation
+
+**Problem** — A Task has `category = Implementation` and belongs to a Change (Workflow), but does not show up in the Change Calendar even without any filters applied.
+
+**Expected behaviour** — Any Task with `category = Implementation` belonging to a Change should be visible in the Change Calendar.
+
+**Actual behaviour** — The Task is silently omitted from the Change Calendar view.
+
+**Root cause** — The Task is not `linked` to a Service Instance. The Change Calendar requires a Service Instance link in addition to `category = Implementation`; this is not enforced or flagged anywhere in the UI at Task creation time.
+
+**Verification** — Confirmed against official Xurrent Product Update documentation (see `Platform/ReportingAnalytics.md` → "Change Calendar — Visibility Requirements" for sources).
+
+**Status** — [Confirmed]
+
+**Workaround** — Link the relevant Service Instance to the Task (or ensure the Task Template used generates the link automatically) before expecting it to appear on the Change Calendar.
+
+**Notes** — See `Platform/ReportingAnalytics.md` for the full set of Change Calendar visibility requirements (category, Workflow membership, Service Instance link) and additional filter/rendering behaviour.
