@@ -23,6 +23,7 @@ An Automation Rule can invoke a registered Webhook directly as part of its actio
 - Scoped per model (e.g. `workflow`, `task`, `workflow-template`).
 - Confirmed: the `/me` endpoint specifically requires a separate `me` scope — easy to miss when a token is scoped only for the target business models.
 - Suitable for personal/manual testing; not recommended as the identity for a production service (see below).
+- A PAT's scope and account actions are fixed at creation time — editing them afterwards does not change what the existing token can do. See `Engineering/KnownLimitations.md` — "Personal Access Token permission changes do not apply retroactively to the existing token".
 
 ### OAuth Client Credentials Grant
 
