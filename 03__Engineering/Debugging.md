@@ -49,3 +49,19 @@ When a call to a sub-resource (e.g. `/workflow_templates/:id/phases`) fails unex
 ## Common Data-Entry Errors
 
 - Batch/array bodies are rejected by creation endpoints that expect a single object — see `Engineering/KnownLimitations.md`, "Task/Phase creation endpoints reject batched arrays".
+
+---
+
+## UI Extension Debugging
+
+### "Maximum call stack size exceeded" from a UI Extension change handler
+
+**Symptom**: Console shows `Uncaught RangeError: Maximum call stack size exceeded`, with a stack trace cycling repeatedly through the same 3-4 function names (your handler → `trigger` → `dispatch` → your handler).
+
+**Root cause**: A field is both (a) a driver of a shared `change` handler (e.g. `$allDrivers.on('change', updateEverything)`) and (b) unconditionally cleared and re-triggered from inside that same handler (`field.val('').trigger('change')`) whenever its row is hidden — even when already empty. Each trigger re-invokes the handler, which clears-and-triggers again, indefinitely.
+
+**Diagnosis method**: A cycle of the same handful of function names repeating top-to-bottom in the stack trace is the signature of this pattern (as opposed to a single deep recursive call with distinct frames).
+
+**Fix**: Guard the clear-and-trigger: only clear and re-trigger if the field actually has a value: `if (field.val() !== '') { field.val('').trigger('change'); }`.
+
+**Status**: [Confirmed] — reproduced and fixed, September 2026.
