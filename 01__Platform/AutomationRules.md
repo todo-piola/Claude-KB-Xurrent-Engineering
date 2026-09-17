@@ -27,13 +27,52 @@ Confirmed: the `Update` field can target a **whole collection**, not just a sing
 
 ## Request/Workflow Completion — Team & Member Assignment
 
-Per official KA *"What are the rules for request re-assignment on Completion or Waiting for Customer"*: a Request cannot be set to `Completed` (or `Waiting for Customer`) without both `team` and `member` populated. Xurrent derives them from the identity that performs the completion action:
+Per official KA *"What are the rules for request re-assignment on Completion or Waiting for Customer"*: a Request cannot be set to `Completed` (or `Waiting for Customer`) without both `team` and `member` populated. Which identity Xurrent derives them from depends on **what performs the completion**.
+
+### Native workflow-driven completion
+
+When a Workflow completes its Request through the standard flow (not a custom Automation Rule forcing completion early), Xurrent does **not** use whoever completed the last Task. It uses the Workflow's **Manager**:
+
+- `member` = the Workflow's Manager.
+- `team` = the first team the Manager belongs to, resolved in this fixed order:
+  1. The Service Desk team of the Request's account.
+  2. The Service Desk team of the Service Instance's account.
+  3. The Service Instance's First Line team.
+  4. The Service Instance's Support team.
+  5. The first enabled team the Manager belongs to, in either account.
+
+Whoever is Manager when the Workflow **starts** is who the Request lands on after workflow completion.
+
+To keep completion statistics/ownership clean, since assignment follows the Workflow Manager, do one of:
+- Set the Workflow Template's Manager to whoever's first team should own the closure, or
+- Enable *Assign after workflow completion* on the template and set a fixed team there, or
+- Set `team` and `member` explicitly via a custom Automation Rule instead of relying on the default derivation.
+
+[Confirmed]
+
+### Forced completion (person or Automation Rule setting `status` directly)
+
+When completion is instead forced directly — a person manually completing the Request, or a custom Automation Rule setting `status = completed` / `waiting_for_customer` outside the native workflow-driven flow — the Workflow Manager is **not** used. Xurrent derives `team`/`member` from the identity performing that action instead:
 - If that identity already belongs to the Request's current team, it is simply set as `member`.
 - If not, Xurrent **moves the Request to a team the identity belongs to** and sets that identity as `member`.
 
-This applies regardless of who completed the last Task or who is the Workflow Manager — neither is part of the resolution logic, despite being intuitive candidates. When the identity performing the completion is an **Automation Rule**, the identity used is the account owner — see `Engineering/KnownLimitations.md`, "Automation Rules that force-complete a Request after an approval rejection bypass Progress Halted and inherit the account owner for team/member re-assignment," for the practical consequence and workaround.
+When the identity performing the completion is an **Automation Rule**, the identity used is the account owner — see `Engineering/KnownLimitations.md`, "Automation Rules that force-complete a Request after an approval rejection bypass Progress Halted and inherit the account owner for team/member re-assignment," for the practical consequence and workaround.
 
 [Confirmed]
+
+*Correction note:* this section previously stated that neither the Task-completer nor the Workflow Manager is ever part of the resolution logic. That statement only held for the forced-completion path above; it did not correctly describe native workflow-driven completion, which does use the Workflow Manager as detailed here. This is the corrected version.
+
+### Workflow Manager — Request Template vs. Workflow Template precedence
+
+When a Request Template has an associated Workflow Template, and both specify a Manager (the Request Template's own Manager field, and the Workflow Template's Manager field), the two can differ. The **Request Template's Manager takes precedence** — it is the one set as the Workflow's Manager once the Workflow is created from that Request.
+
+[Confirmed]
+
+## Ternary Evaluation Order
+
+Expressions are written top-to-bottom, but nested/chained ternary (`condition then X else Y`) expressions are evaluated bottom-to-top. In a chain of ternaries, the rule keeps the result of whichever branch is evaluated last — the one written closest to the bottom / most deeply nested — as the highest-priority match. When designing a chain of ternaries meant to express a priority order, write the highest-priority condition last (closest to the bottom), not first.
+
+[Observed]
 
 ## Known Automation Rule Constraints
 
