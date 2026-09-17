@@ -15,6 +15,8 @@ A bulk endpoint or Automation Rule action that replicates the button's effect in
 ### Actual behaviour
 No such endpoint or action exists. The button's own audit trail confirms it only creates Phase and Task records — nothing else (no other field changes).
 
+The new Template's Phases/Tasks are appended at the end of the Workflow's original flow. Once the original flow's Tasks complete, the appended Tasks do **not** start automatically — the Workflow instead moves to `Progress Halted`. The first Task of the newly-appended segment must be assigned/activated manually, or via a dedicated Automation Rule, for the Workflow to resume progress.
+
 ### Verification
 Reviewed the full Workflows / Workflow Templates API reference; cross-checked the button's effect against the Workflow's audit trail in a live sandbox.
 
@@ -22,7 +24,7 @@ Reviewed the full Workflows / Workflow Templates API reference; cross-checked th
 [Confirmed]
 
 ### Workaround
-See `Engineering/Recipes.md` — "Injecting Phases and Tasks from a Workflow Template into an Already-Running Workflow (via REST API)".
+See `Engineering/Recipes.md` — "Injecting Phases and Tasks from a Workflow Template into an Already-Running Workflow (via REST API)". When replicating this pattern, also account for the `Progress Halted` behaviour above: explicitly assign/activate the first newly-created Task rather than assuming it starts on its own.
 
 ### Notes
 —
@@ -254,6 +256,149 @@ Confirmed by Xurrent Support, including a live reproduction of the native reject
 
 ### Notes
 See `Platform/AutomationRules.md` — "Request/Workflow Completion — Team & Member Assignment" — for the general (non-Automation-Rule) version of the resolution rule this entry depends on.
+
+---
+
+## Personal Access Token permission changes do not apply retroactively to the existing token
+
+### Problem
+Whether changing a Personal Access Token's (PAT) scope or allowed actions on accounts, after the token has already been created, updates the permissions of API calls already using that token.
+
+### Expected behaviour
+Unclear from the UI alone; editing a PAT's scope/actions in *My Profile → Personal Access Tokens* could plausibly apply immediately to the existing token, the same way changing a user's permissions applies immediately to their session.
+
+### Actual behaviour
+No. A PAT's scope and account actions are fixed at creation time. Editing them afterwards on the same token does not change what that token is authorized to do — it keeps its original permissions. A genuinely new token must be created, and every integration/connection using the old one must be updated to use it.
+
+### Root cause
+[Observed] Not explicitly documented as such, but consistently reproduced. This limitation is specific to PATs — OAuth (Client Credentials Grant) does not exhibit it; updating an OAuth client's scope takes effect on subsequent token requests without needing to issue a new client credential.
+
+### Verification
+Live-tested: changed scope/actions on an existing PAT, confirmed via subsequent API calls that permissions remained as originally granted; behaviour resolved only after generating a new token and updating the integration to use it.
+
+### Status
+[Observed]
+
+### Workaround
+Treat a PAT as immutable once created. To change its scope or permitted actions, generate a brand-new token and update every integration/connection using the old one — do not expect an in-place edit to take effect. Prefer OAuth Client Credentials for production integrations where scope changes are expected to evolve.
+
+### Notes
+Cross-reference `Integrations/Webhooks.md` — "Personal Access Tokens (PAT)" — for the general PAT authentication mechanism this refines. Relevant when reconfiguring an iPaaS connection's PAT-based credential — see `Integrations/iPaaS.md`.
+
+---
+
+## CMDB import apps require a resolvable Support Team before creating any CI
+
+### Problem
+Whether a CMDB import/discovery-tool app (an app instance ingesting Configuration Items) can create CI records without a resolvable Support Team configured for the CIs it is importing.
+
+### Expected behaviour
+Unclear; a missing Support Team might be expected to block only the specific asset/CI lacking a resolvable team, while other assets with valid team mappings continue to import normally.
+
+### Actual behaviour
+A CMDB import app requires a resolvable Support Team — via the associated Product, or the app's own configuration — before it can create any CI. When that team cannot be resolved, the import silently fails to count uploads for **all** sources being processed in that run, not just the specific asset that produced the visible error.
+
+### Root cause
+[Hypothesis] The import pipeline appears to validate/require a Support Team as a precondition for the whole batch/run rather than per-asset, so one unresolved team blocks the entire upload count silently instead of surfacing a per-asset error only.
+
+### Verification
+[Observed] — reproduction steps and the specific app/Product configuration involved are not yet detailed; add them here once available.
+
+### Status
+[Observed]
+
+### Workaround
+Ensure every CI type/category expected from a discovery/import source has a resolvable Support Team configured (via its Product or the importing app's own settings) before running or scheduling the import, to avoid a silent, account-wide upload count failure.
+
+### Notes
+Cross-reference `Integrations/iPaaS.md` if the import is driven through an iPaaS runbook/connector rather than a native discovery app integration.
+
+---
+
+## Approval Task status cannot be forced to Approved via Automation Rule
+
+### Problem
+Whether an Automation Rule can force the status of an Approval-category Task directly to `approved` (`set status = approved`), bypassing the actual approver, in order to auto-approve regardless of who is assigned as approver.
+
+### Expected behaviour
+Since `status` is an Optional (not Readonly) Task field and `approved` is a documented valid enum value, `update <task> set status = approved` was expected to behave like the officially confirmed pattern `set status = canceled`.
+
+### Actual behaviour
+Xurrent rejects the save with the error "Estado no es válido" (invalid state). The Task is not updated.
+
+### Root cause
+[Hypothesis, strongly supported] `approved` is a derived Task state, computed from the `approvals` sub-collection reaching `required_approvals` real Approval records with `status = approved`. Unlike "abandon" states (`canceled`, `failed`), it cannot be assigned directly. Supporting evidence:
+- `Approval.status` is Readonly in the REST API — only `approver_id` and `planned_effort` are writable (developer.xurrent.com — Task Approvals API).
+- No `taskApprovalCreate`/`taskApprovalUpdate` mutation exists anywhere in the GraphQL schema — the Approval sub-record cannot be written via any public API.
+- Empirically confirmed: `set status = approved` on Task 10045024 ("Internal Control Approval") rejected with "Estado no es válido".
+
+### Verification
+Live test in a sandbox environment (Task 10045024). Cross-referenced against absence of any write path for Approval in REST and GraphQL.
+
+### Status
+[Observed]
+
+### Workaround
+To skip an approval under a given condition, use `set status = canceled` (confirmed to work, and one of the "finished" states that releases successors, same as `approved`/`completed`) plus add a note explaining why it was skipped — instead of faking an approval. A real, traceable approval requires a real approver (person or service account) going through the standard mechanism (UI, email token). No Automation Rule or API shortcut exists.
+
+### Notes
+See also `Platform/AutomationRules.md` — "Known Automation Rule Constraints".
+
+---
+
+## Dynamic `required` toggling on custom UI Extension fields has no effect
+
+### Problem
+A conditionally-shown custom field needed to become mandatory only while visible, so `$field.toggleClass('required', condition)` was used at runtime.
+
+### Expected behaviour
+The platform enforces/lifts the mandatory validation as the `required` class is toggled.
+
+### Actual behaviour
+No effect — the field never blocked task completion regardless of the toggled class.
+
+### Root cause
+[Hypothesis] Xurrent appears to read a custom field's mandatory state from the class present in the extension's rendered HTML, not from live DOM class changes made via jQuery.
+
+### Verification
+Tested on a Task Template UI Extension (category `task_template`). Toggling `required` dynamically had no effect; setting `class="required"` statically in the HTML from the start (on rows whose *visibility* — not class — is toggled) worked correctly.
+
+### Status
+[Observed]
+
+### Workaround
+Mark conditionally-shown-but-mandatory fields with `class="required"` directly in the HTML. Only toggle row *visibility* dynamically (show/hide) — never the `required` class. Clear the field's value when hiding it.
+
+### Notes
+Date: September 2026. Cross-reference `Engineering/Recipes.md` — "Safe hide-and-clear pattern for conditional UI Extension fields".
+
+---
+
+## `.toggleClass()` on `.uix-row` is unreliable under the Q1 2026 layout — use `.show()`/`.hide()`
+
+### Problem
+After migrating a legacy UI Extension from `row` to `uix-row` (per the January 29, 2026 "Improved Record Layout" update), conditional show/hide logic using `$row.toggleClass('hide', condition)` (with a custom `.hide { display: none; }` rule) stopped reliably hiding fields.
+
+### Expected behaviour
+Toggling a `display:none` class should hide the row, as it did under the legacy `row` layout.
+
+### Actual behaviour
+Rows did not consistently hide/show.
+
+### Root cause
+[Unknown] — not confirmed whether the new layout engine overrides row display or conflicts with class-based toggling.
+
+### Verification
+Confirmed against a separate, independently working UI Extension in the same account that uses `.show()`/`.hide()` exclusively (never `toggleClass()` for visibility). Switching the failing extension to direct `.show()`/`.hide()` calls fixed it immediately.
+
+### Status
+[Observed]
+
+### Workaround
+Under `uix-row`, always control row visibility with jQuery's `.show()`/`.hide()`, never with `toggleClass()` on a custom class. Also: hiding an entire `.section` (grouping several `.uix-row`) does not reliably cascade to its children — toggle visibility at the individual `.uix-row` level.
+
+### Notes
+Date: September 2026. Cross-reference `Engineering/Recipes.md` — "Migrating a legacy UI Extension (`row`) to the modern layout (`uix-row`)" and "Block-the-form banner pattern".
 
 ---
 
