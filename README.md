@@ -16,6 +16,7 @@ recipes, ITSM solution patterns, and integrations notes).
 | `03__Engineering/Recipes.md` | Reusable implementation patterns |
 | `03__Engineering/SolutionPatterns.md` | ITSM process design patterns |
 | `03__Engineering/Integrations/Webhooks.md` | Webhook integration notes |
+| `03__Engineering/Integrations/iPaaS.md` | iPaaS Runbook connector action reference (Send HTTP Request, Evaluate Ruby Code) — primary source for iPaaS questions |
 
 ## Recommended workflow
 
