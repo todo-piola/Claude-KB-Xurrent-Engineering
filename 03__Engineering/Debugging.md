@@ -65,3 +65,23 @@ When a call to a sub-resource (e.g. `/workflow_templates/:id/phases`) fails unex
 **Fix**: Guard the clear-and-trigger: only clear and re-trigger if the field actually has a value: `if (field.val() !== '') { field.val('').trigger('change'); }`.
 
 **Status**: [Confirmed] — reproduced and fixed, September 2026.
+
+## Split rule logic into several named expressions to get per-expression logging
+
+### Technique
+
+When an Automation Rule produces a wrong value, or when it is hard to see which branch of a condition was taken, break the logic into intermediate named expressions instead of writing one long expression. Every expression value is logged during rule execution, so the execution log shows where the value diverges from what was expected.
+
+### Typical use
+
+- Multi-step lookups (record → related record → field): one expression per hop.
+- Chained ternaries: one expression per level, so the log shows which level resolved the selection.
+- Conditions built from several tests: one Boolean expression per test, combined in the Condition.
+
+### Status
+
+[Confirmed] — official Example 8 explains that a lookup "could be written in 1 expression", and that writing it in several expressions makes all values appear in the log during rule execution (`help.xurrent.com/help/automation_rule_example8`).
+
+### Notes
+
+Related: `Engineering/Recipes.md`, "Multi-Branch Selection with Chained Ternary Expressions".

@@ -419,3 +419,28 @@ Date: September 2026. Cross-reference `Engineering/Recipes.md` — "Migrating a 
 **Workaround** — Link the relevant Service Instance to the Task (or ensure the Task Template used generates the link automatically) before expecting it to appear on the Change Calendar.
 
 **Notes** — See `Platform/ReportingAnalytics.md` for the full set of Change Calendar visibility requirements (category, Workflow membership, Service Instance link) and additional filter/rendering behaviour.
+
+---
+
+## Automation Rule expression language has no case/switch construct
+
+### Problem
+Whether an Automation Rule expression can select among more than two values with a single multi-way construct (`case`, `switch`, `when`).
+
+### Expected behaviour
+A construct that maps several conditions to several results in one expression.
+
+### Actual behaviour
+No such construct is documented. The only selection construct is the ternary `C then A else B` (equivalent: `C ? A : B`). Multi-way selection has to be built by chaining named ternaries.
+
+### Verification
+Full review of the official Automation Rule Operators page (`help.xurrent.com/help/automation_rule_operators`): no case/switch operator is listed. The official Example 8 (`help.xurrent.com/help/automation_rule_example8`) implements a multi-branch selection with chained named ternaries.
+
+### Status
+[Confirmed by absence]
+
+### Workaround
+Chain named ternaries, each using the previous one as its `else` branch. See `Engineering/Recipes.md`, "Multi-Branch Selection with Chained Ternary Expressions".
+
+### Notes
+Absence-based finding: revisit if the operators page later documents a multi-way construct.

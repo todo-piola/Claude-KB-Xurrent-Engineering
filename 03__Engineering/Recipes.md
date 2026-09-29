@@ -187,3 +187,81 @@ Xurrent introduced a new default form layout (labels placed above fields, left-a
 ### Notes
 
 Cross-reference `Engineering/KnownLimitations.md` entries on `required` toggling and `.toggleClass()` visibility — both were discovered while migrating an extension under this same layout change.
+
+---
+
+## Recipe: Multi-Branch Selection with Chained Ternary Expressions (Automation Rules)
+
+### When to use it
+
+An Automation Rule must choose one of more than two values (dates, teams, numbers, text) based on a selected case — e.g. extending a date by 3 months, 6 months, 1 year or 2 years depending on a selected interval. The expression language has no `case`/`switch` construct (see `Engineering/KnownLimitations.md`), so multi-way selection is built by chaining named ternary expressions.
+
+### Pattern
+
+Each ternary uses the previous ternary's result as its `else` branch. The chain is built bottom-up, because an expression can only reference expressions defined above it.
+
+```
+Expressions (in this order):
+
+-- 1. Input and case flags (Booleans)
+base_date              <date field of the record>
+selected_interval      custom_fields.<interval_field>
+is_two_years           selected_interval = 'two_year'
+is_one_year            selected_interval = 'one_year'
+is_six_months          selected_interval = 'six_months'
+is_three_months        selected_interval = 'three_months'
+has_base_date          base_date != nil
+has_valid_interval     is_two_years or is_one_year or is_six_months or is_three_months
+
+-- 2. Candidate results (all of the SAME type — here: dates)
+date_plus_two_years      base_date + 2.years
+date_plus_one_year       base_date + 1.year
+date_plus_six_months     base_date + 6.months
+date_plus_three_months   base_date + 3.months
+
+-- 3. Chained selection (bottom-up)
+date_six_or_three_months   is_six_months then date_plus_six_months else date_plus_three_months
+date_one_year_or_less      is_one_year then date_plus_one_year else date_six_or_three_months
+new_date                   is_two_years then date_plus_two_years else date_one_year_or_less
+
+Condition:
+  has_base_date and has_valid_interval
+
+Update current record:
+  Set <date field> = new_date
+```
+
+Evaluation flow:
+
+```
+is_two_years?
+ ├─ YES → date_plus_two_years
+ └─ NO  → is_one_year?
+            ├─ YES → date_plus_one_year
+            └─ NO  → is_six_months?
+                       ├─ YES → date_plus_six_months
+                       └─ NO  → date_plus_three_months
+```
+
+### Rules for the pattern
+
+1. **Every branch returns the same type.** `then` and `else` must both return the final value (a date here) — never a Boolean flag.
+2. **Every intermediate ternary must be consumed.** Each chained expression must be referenced by the next one, and the last one by the Update. An expression that nothing references cannot influence the Update, so its cases are silently lost. A frequent mistake is pointing an `else` at a candidate value (`date_plus_*`) instead of at the previous ternary.
+3. **Build bottom-up.** Define the innermost choice (the last two cases) first and the outermost choice last; the outermost is the one used in the Update.
+4. **The final `else` is a default.** Guard it with a validity check in the Condition (`has_valid_interval`) so an empty or unexpected input never applies the default case.
+5. **Prefer exact comparison (`=`) over `*=` for known values.** `*=` is a *contains* match, so it can match partial strings.
+6. **One case per expression keeps executions debuggable.** Each intermediate value is logged separately (see `Engineering/Debugging.md`), showing at which level the selection resolved.
+
+### Status
+
+- Ternary syntax `C then A else B` (equivalent: `C ? A : B`) — [Confirmed] (`help.xurrent.com/help/automation_rule_operators`, "Ternary Statements")
+- Chaining a ternary into another ternary's `else` — [Confirmed] (`help.xurrent.com/help/automation_rule_example8`)
+- Expressions can only reference expressions defined above them — [Confirmed] (operators page, "String Interpolation")
+- Date + duration arithmetic (`+ 2.years`, `+ 1.year`, `+ 6.months`) — [Confirmed] (operators page, "Formulas" and "Date & Time Manipulation")
+- `and`/`or` in expressions, `and` precedence over `or` — [Confirmed] (Product Update, May 2022)
+
+### Related entries
+
+- `01__Platform/AutomationRules.md` — ternary operator and expression definition order.
+- `Engineering/KnownLimitations.md` — "no case/switch construct".
+- `Engineering/Debugging.md` — per-expression logging.

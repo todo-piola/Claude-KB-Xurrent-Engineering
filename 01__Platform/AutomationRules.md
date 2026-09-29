@@ -13,7 +13,8 @@ Source: `help.xurrent.com/help/automation_rule_operators` (official).
 | `new(task, 'Task Template Subject')` | Creates a new Task in the **same** Workflow, based on the named Task Template. Only works for Task records — no `new(workflow, ...)` or `new(phase, ...)` exists. |
 | `collection.select(condition)` / `collection.reject(condition)` | Filters a collection. Function-call syntax with parentheses — **not** Ruby block syntax (`{ }`). |
 | `workflow.tasks['Subject']` | Indexes a Task within a Workflow by its (ideally unique) subject. |
-| `condition then X else Y` | Ternary expression. |
+| `condition then X else Y` / `condition ? X : Y` | Ternary expression; both forms are equivalent, and `!condition` negates. For more than two cases, chain named ternaries, each using the previous one as its `else` branch — see `Engineering/Recipes.md`, "Multi-Branch Selection with Chained Ternary Expressions". |
+| `date + N.days` / `date + N.months` / `date + N.years` | Date arithmetic (official examples: `created_at + 3.days`, `created_at - 4.hours`; duration units appear in singular and plural, e.g. `1.year.ago`, `2.years.from_now`). Note that `+` acts as *concatenate* when the value on its left is a text string, and as *add* otherwise. |
 
 ## Updates
 
@@ -24,6 +25,8 @@ Confirmed: the `Update` field can target a **whole collection**, not just a sing
 - All actions within a single Automation Rule execution run as **one transaction**: if one action fails, the entire batch is aborted, including actions that would otherwise have succeeded. See `Engineering/Debugging.md` — "Actions within a rule execute as a single transaction" — for the resulting debugging implication.
 - `new(task, 'Subject')` requires the referenced Task Template to already be linked to the Workflow Template that the current Workflow was created from; otherwise wiring it as a predecessor/successor of an existing Task fails with `"Successors must be linked to the same workflow"`.
 - Automation Rules execute as the **account owner**. This matters whenever a Rule's action changes a field whose value or side effects depend on "who performed this" — e.g. completing a Request (see below). [Confirmed — Xurrent Support, live reproduction in a clean environment.]
+- Expression definition order matters. An expression can only reference expressions that are already defined above it in the list; expressions can be reordered by dragging them up or down. This is why chained expressions (e.g. multi-branch ternaries) are built bottom-up. [Confirmed — `help.xurrent.com/help/automation_rule_operators`, "String Interpolation".]
+- Boolean operators in expressions. `and` and `or` are available both in Conditions and in expressions (expressions since May 2022). `and` has higher precedence than `or`. Values that are not Boolean (text, numbers) are converted to Boolean when a logical function is applied. [Confirmed — Xurrent Product Update "Boolean Operators for Automation Rule Expressions".]
 
 ## Request/Workflow Completion — Team & Member Assignment
 
